@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoneyRotator : MonoBehaviour
+public class ObjectRotator : MonoBehaviour
 {
     [SerializeField] private Vector3 _rotateVelocity;
     [SerializeField] private Space _rotateSpace;

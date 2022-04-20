@@ -142,6 +142,24 @@ public class RunnerScript : MonoBehaviour
         currentAnimName = walkingAnimName;
     }
 
+    public void DodgeBack()
+    {
+        StartCoroutine(DodgeBackProcess());
+    }
+
+    IEnumerator DodgeBackProcess()
+    {
+        canSwerve = false;
+        canRun = false;
+        animancer.PlayAnimation("Hit");
+
+        yield return new WaitForSeconds(0.933f);
+
+        animancer.PlayAnimation(currentAnimName);
+        canRun = true;
+        canSwerve = true;
+    }
+
     public void ResetCharacter()
     {
         PlayAnimation(StartIdleAnimName, 1f);

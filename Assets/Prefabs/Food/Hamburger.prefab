@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7609270127885374426}
   - component: {fileID: -7901518108652795094}
   - component: {fileID: 1140198317911134558}
+  - component: {fileID: -445002991717137522}
   m_Layer: 0
   m_Name: Hamburger
   m_TagString: Untagged
@@ -113,6 +114,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2cef4a53fc9f794ba42bf30a5cf1663, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rotateVelocity: {x: 0, y: 0, z: 0}
+  _rotateVelocity: {x: 0, y: 150, z: 0}
   _rotateSpace: 0
   speed: 4
+--- !u!65 &-445002991717137522
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7609270127887633690}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.52258265, y: 0.28791663, z: 0.51557946}
+  m_Center: {x: 0, y: 0.14395829, z: -0.000000014901161}

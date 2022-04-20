@@ -4,29 +4,28 @@ using UnityEngine;
 
 public class CollidableObjects : MonoBehaviour
 {
-    private Bermuda.Runner.BermudaRunnerCharacter bermudaRunnerCharacter;
-
+    [SerializeField] RunnerScript runnerScript;
     public ObjectType objectType;
 
     public enum ObjectType
     {
         Fastfood,
         Fruit,
-        Cheese,
         Obstacle,
         FinishLine,
     }
 
     private void Start()
     {
-        bermudaRunnerCharacter = FindObjectOfType<Bermuda.Runner.BermudaRunnerCharacter>();
+        runnerScript = FindObjectOfType<RunnerScript>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (objectType == ObjectType.Fastfood)
         {
-            var particle = ObjectPooler.Instance.GetPooledObject("MoneyParticle");
+            Debug.Log("fast");
+            var particle = ObjectPooler.Instance.GetPooledObject("FoodParticle");
             particle.transform.position = other.gameObject.transform.position + new Vector3(0f, 0.75f, 0.5f);
             particle.transform.rotation = gameObject.transform.rotation;
             particle.SetActive(true);
@@ -38,7 +37,7 @@ public class CollidableObjects : MonoBehaviour
 
         if (objectType == ObjectType.Fruit)
         {
-            var particle = ObjectPooler.Instance.GetPooledObject("DiceParticle");
+            var particle = ObjectPooler.Instance.GetPooledObject("FoodParticle");
             particle.transform.position = transform.position;
             particle.transform.rotation = transform.rotation;
             particle.SetActive(true);
@@ -51,14 +50,14 @@ public class CollidableObjects : MonoBehaviour
         if (objectType == ObjectType.Obstacle)
         {
             gameObject.SetActive(false);
-            var particle = ObjectPooler.Instance.GetPooledObject("AtmParticle");
+            var particle = ObjectPooler.Instance.GetPooledObject("ObstacleParticle");
             particle.transform.position = transform.position;
             particle.transform.rotation = transform.rotation;
             particle.SetActive(true);
             particle.GetComponent<ParticleSystem>().Play();
 
             PlayerManagement.Instance.AddHealth(-10);
-            bermudaRunnerCharacter.DodgeBack();
+            runnerScript.DodgeBack();
         }
 
         if (objectType == ObjectType.FinishLine)
