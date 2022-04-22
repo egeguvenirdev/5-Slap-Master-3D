@@ -31,6 +31,7 @@ public class UIManager : MonoSingleton<UIManager>
     [SerializeField] private TMP_Text multiplierButtonText;
     [SerializeField] private TMP_Text multiplierGameText;
     [SerializeField] private Image multiplierImage;
+    [SerializeField] private Image healthImage;
     private int multiplier;
     private int multiplierCounter = 0;
 

@@ -24,7 +24,6 @@ public class CollidableObjects : MonoBehaviour
     {
         if (objectType == ObjectType.Fastfood)
         {
-            Debug.Log("fast");
             var particle = ObjectPooler.Instance.GetPooledObject("FoodParticle");
             particle.transform.position = other.gameObject.transform.position + new Vector3(0f, 0.75f, 0.5f);
             particle.transform.rotation = gameObject.transform.rotation;
@@ -62,13 +61,13 @@ public class CollidableObjects : MonoBehaviour
 
         if (objectType == ObjectType.FinishLine)
         {
-            Invoke("FinishedAction", 1.75f);
+            Invoke("FinishedAction", 0.1f);
         }
     }
 
     private void FinishedAction()
     {
-
+        PlayerManagement.Instance.FinishedAction();
     }
 
 }

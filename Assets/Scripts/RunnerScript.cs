@@ -30,6 +30,12 @@ public class RunnerScript : MonoBehaviour
     [SerializeField] private string danceAnimName = "Dance";
     [SerializeField] private float danceAnimSpeed = 1f;
 
+    [SerializeField] private string jumpeAnimName = "Jump";
+    [SerializeField] private float jumpAnimSpeed = 1f;
+
+    [SerializeField] private string structWalkingAnimName = "StructWalking";
+    [SerializeField] private float structWalkingAnimSpeed = 1f;
+
     [SerializeField] private string currentAnimName = "Walking";
     [Space]
 
@@ -139,7 +145,7 @@ public class RunnerScript : MonoBehaviour
         animancer.PlayAnimation(animName);
         animancer.SetStateSpeed(animSpeed);
 
-        currentAnimName = walkingAnimName;
+        currentAnimName = animName;
     }
 
     public void DodgeBack()
