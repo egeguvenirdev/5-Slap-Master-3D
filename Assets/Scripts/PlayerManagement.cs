@@ -78,8 +78,10 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     {
         Debug.Log("UCAMAAZSIN TOMBIK");
         runnerScript.PlayAnimation("Jump", 1);
+
+        sequence.Kill();
         sequence = DOTween.Sequence();
-        sequence.Append(transform.DOJump(new Vector3(0, 0, transform.position.z + 5), 3, 1, 2.3f)
+        sequence.Insert(1.1f, transform.DOJump(new Vector3(0, 0, transform.position.z + 3.5f), 3, 1, 1.1f)
             .OnComplete(() => { runnerScript.PlayAnimation("StructWalk", 1); }) );
 
         sequence.Append(transform.DOMoveZ(finishLocation, 2.5f));
