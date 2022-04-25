@@ -17,7 +17,7 @@ namespace Bermuda.Animation
         {
             if (_playDefault)
             {
-                PlayAnimation(_clips[0].name);
+                PlayAnimation(_clips[Random.Range(0, _clips.Length)].name);
             }
         }
         public void PlayAnimation(string clipName)

@@ -91,6 +91,12 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     {
         sequence.Kill();
         runnerScript.PlayAnimation("Idle", 1);
+        CallTheBoss();
+    }
+
+    private void CallTheBoss()
+    {
+
     }
 
     public void ResetCharachter()
