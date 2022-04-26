@@ -10,11 +10,17 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     //player stats
     [SerializeField] private float minHealth = 100;
     [SerializeField] private float maxHealth = 600;
-    [SerializeField] private float finishLocation = 99;
+    [SerializeField] private Vector3 finishLocation = new Vector3(0, 0.25f, 99);
+    [SerializeField] private GameObject localMover;
+
+    [SerializeField] private GameObject boss;
+    [SerializeField] private BossManager bossManager;
+
     private bool canRun = true;
     private float currentHealth;
 
     Sequence sequence;
+    Sequence sequenceLocalMover;
 
     void Start()
     {
@@ -70,8 +76,11 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     private void RingWalk()
     {
         sequence = DOTween.Sequence();
+        sequenceLocalMover = DOTween.Sequence();
         runnerScript.PlayAnimation("StructWalk", 1);
-        sequence.Append(transform.DOMoveZ(finishLocation, 4));
+
+        sequenceLocalMover.Append(localMover.transform.DOMove(finishLocation, 8));
+        sequence.Append(transform.DOMove(finishLocation, 8));
     }
 
     public void RingJump()
@@ -81,22 +90,30 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
 
         sequence.Kill();
         sequence = DOTween.Sequence();
-        sequence.Insert(1.1f, transform.DOJump(new Vector3(0, 0, transform.position.z + 3.5f), 3, 1, 1.1f)
+        sequence.Insert(1.1f, transform.DOJump(new Vector3(0, .25f, transform.position.z + 3.5f), 3, 1, 1.1f)
             .OnComplete(() => { runnerScript.PlayAnimation("StructWalk", 1); }) );
 
-        sequence.Append(transform.DOMoveZ(finishLocation, 2.5f));
+        sequence.Append(transform.DOMove(finishLocation, 2.5f));
     }
 
     public void RingIdle()
     {
         sequence.Kill();
         runnerScript.PlayAnimation("Idle", 1);
+        SetCamera();
         CallTheBoss();
+    }
+
+    private void SetCamera()
+    {
+
     }
 
     private void CallTheBoss()
     {
-
+        Instantiate(boss, new Vector3(0, 15, 105), Quaternion.Euler(0, 180, 0));
+        bossManager = GameObject.FindGameObjectWithTag("Boss").GetComponent<BossManager>();
+        bossManager.CallTheBoss();
     }
 
     public void ResetCharachter()

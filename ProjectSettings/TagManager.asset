@@ -6,6 +6,7 @@ TagManager:
   tags:
   - FoodParticle
   - ObstacleParticle
+  - Boss
   layers:
   - Default
   - TransparentFX

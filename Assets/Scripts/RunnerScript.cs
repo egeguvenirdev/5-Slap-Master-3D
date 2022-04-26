@@ -96,7 +96,7 @@ public class RunnerScript : MonoBehaviour
         else
         {
             canRun = false;
-            canSwerve = false;
+            //canSwerve = false;
             PlayAnimation(idleAnimName, 1f);
             currentAnimName = idleAnimName;
         }
