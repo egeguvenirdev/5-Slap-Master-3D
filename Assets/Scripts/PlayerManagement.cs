@@ -10,17 +10,25 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     //player stats
     [SerializeField] private float minHealth = 100;
     [SerializeField] private float maxHealth = 600;
+    [SerializeField] private float slapPower = 50;
     [SerializeField] private Vector3 finishLocation = new Vector3(0, 0.25f, 99);
     [SerializeField] private GameObject localMover;
+    [Space]
 
     [SerializeField] private GameObject boss;
     [SerializeField] private BossManager bossManager;
+    [Space]
+
+    [SerializeField] private GameObject multiplierBar;
+    [SerializeField] private Vector3 multiplierBarFinishLocation = new Vector3(0, 3.25f, 0.25f);
+    private Vector3 multiplierBarFirstLocation = new Vector3(0, 10f, 0.25f);
 
     private bool canRun = true;
     private float currentHealth;
 
     Sequence sequence;
     Sequence sequenceLocalMover;
+    Sequence sequenceCamAndBar;
 
     void Start()
     {
@@ -55,7 +63,6 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         {
             currentHealth = 600;
         }
-
         SetUIProcess();
     }
 
@@ -85,7 +92,6 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
 
     public void RingJump()
     {
-        Debug.Log("UCAMAAZSIN TOMBIK");
         runnerScript.PlayAnimation("Jump", 1);
 
         sequence.Kill();
@@ -100,13 +106,19 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     {
         sequence.Kill();
         runnerScript.PlayAnimation("Idle", 1);
-        SetCamera();
+        SetCamAndBar();
         CallTheBoss();
     }
 
-    private void SetCamera()
+    private void SetCamAndBar()
     {
+        //bar
+        multiplierBar.SetActive(true);
+        sequenceCamAndBar.Append(multiplierBar.transform.DOLocalMove(multiplierBarFinishLocation, 1.5f));
+        sequenceCamAndBar.Join(multiplierBar.transform.DOLocalRotate(new Vector3(0, 120, 0), 1.5f, RotateMode.FastBeyond360)
+            .SetEase(Ease.Linear).SetLoops(2, LoopType.Restart));
 
+        //cam
     }
 
     private void CallTheBoss()
@@ -114,6 +126,11 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         Instantiate(boss, new Vector3(0, 15, 105), Quaternion.Euler(0, 180, 0));
         bossManager = GameObject.FindGameObjectWithTag("Boss").GetComponent<BossManager>();
         bossManager.CallTheBoss();
+    }
+
+    public void SlapTheBoss()
+    {
+
     }
 
     public void ResetCharachter()

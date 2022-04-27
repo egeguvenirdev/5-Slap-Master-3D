@@ -20,29 +20,30 @@ public class UIManager : MonoSingleton<UIManager>
     //pause button ui uthilities
     [SerializeField] private Toggle vibrationToggle;
     [SerializeField] private Toggle soundToggle;
-    
-
     [Space]
+    
+    //slap button
+    [SerializeField] private GameObject slapButton;
+    [SerializeField] private TMP_Text slapBoardText;
+    [Space]
+
     //status texts UIs
     [SerializeField] private TMP_Text currentLV;
     [SerializeField] private TMP_Text totalMoneyText;
     [SerializeField] private GameObject nextLevelButton;
-    [SerializeField] private Button multiplierButton;
-    [SerializeField] private TMP_Text multiplierButtonText;
-    [SerializeField] private TMP_Text multiplierGameText;
-    [SerializeField] private Image multiplierImage;
     [SerializeField] private Image healthImage;
+    [Space]
     private int multiplier;
     private int multiplierCounter = 0;
 
-    [Space]
     //status texts
     [SerializeField] private Image progressBarImage;
-
     [Space]
+
     //randommultiplier selection
-    [SerializeField] private RectTransform arrowImage;
+    [SerializeField] private Transform arrow;
     private bool clickBonusCheck = false;
+    [Space]
 
     public bool isPaused;
 
@@ -72,18 +73,16 @@ public class UIManager : MonoSingleton<UIManager>
         {
             tapToPlayUI.SetActive(false);
             isPaused = false;
-            //PlayerManagement.Instance.CanRun();
         }
 
         if (nextLvMenuUI.activeSelf)
         {
             nextLvMenuUI.SetActive(false);
             isPaused = false;
-            ResMultiplierButton();
+            ResSlapButton();
 
             HCLevelManager.Instance.LevelUp();
             LevelText();
-            //PlayerManagement.Instance.CharacterReset();
             HCLevelManager.Instance.GenerateCurrentLevel();
         }
 
@@ -92,8 +91,6 @@ public class UIManager : MonoSingleton<UIManager>
             restartMenuUI.SetActive(false);
             isPaused = false;
 
-            /*PlayerPrefs.SetInt("TotalMoney", PlayerPrefs.GetInt("TotalMoney")
-                + PlayerManagement.Instance.currentLvMoneyAmount);*/
             SetTotalMoney();
 
         }
@@ -173,35 +170,61 @@ public class UIManager : MonoSingleton<UIManager>
         totalMoneyText.text = "" + PlayerPrefs.GetInt("TotalMoney", 0) + "$";
     }
 
-    private void MoveMultiplierArrow()
+    public void MoveMultiplierArrow()
     {
-        arrowImage.DORotate(arrowImage.forward * 90, 0.01f);
-        arrowImage.DORotate(arrowImage.forward * -90, 1f).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo);
+        arrow.DOMoveX(-4.4f, 2);
+        arrow.DOMoveX(4.4f, 2).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo);
+        slapButton.SetActive(true);
         StartCoroutine(HandTransform());
     }
 
     IEnumerator HandTransform()
     {
-        float arrowAngle = arrowImage.eulerAngles.z;
-        Debug.Log(arrowImage.eulerAngles.z);
-        if (arrowAngle > 45 && arrowAngle < 90)
+        float arrowXpos = arrow.position.x;
+
+        if (arrowXpos > -4.5f && arrowXpos < -3.5f)
         {
-            SetMuiltiplier("Get 1X", 1);
+            SetMuiltiplier(1);
         }
 
-        if (arrowAngle > 0 && arrowAngle < 45)
+        if (arrowXpos > -3.5f && arrowXpos < -2.5f)
         {
-            SetMuiltiplier("Get 2X", 2);
+            SetMuiltiplier(2);
         }
 
-        if (arrowAngle > 315 && arrowAngle < 360)
+        if (arrowXpos > -2.5f && arrowXpos < -1.5f)
         {
-            SetMuiltiplier("Get 3X", 3);
+            SetMuiltiplier(3);
         }
 
-        if (arrowAngle > 270 && arrowAngle < 315)
+        if (arrowXpos > -1.5f && arrowXpos < -0.5f)
         {
-            SetMuiltiplier("Get 4X", 4);
+            SetMuiltiplier(4);
+        }
+
+        if (arrowXpos > -0.5f && arrowXpos < 0.5f)
+        {
+            SetMuiltiplier(5);
+        }
+
+        if (arrowXpos > 0.5f && arrowXpos < 1.5f)
+        {
+            SetMuiltiplier(4);
+        }
+
+        if (arrowXpos > 1.5f && arrowXpos < 2.5f)
+        {
+            SetMuiltiplier(3);
+        }
+
+        if (arrowXpos > 2.5f && arrowXpos < 3.5f)
+        {
+            SetMuiltiplier(2);
+        }
+
+        if (arrowXpos > 3.5f && arrowXpos < 4.5f)
+        {
+            SetMuiltiplier(1);
         }
 
         if (!clickBonusCheck)
@@ -211,48 +234,54 @@ public class UIManager : MonoSingleton<UIManager>
         }
         else
         {
-            MultiplierButton(true);
+            SlapButton(true);
         }
     }
 
-    private void SetMuiltiplier(string textString, int multiplierInt)
+
+    //RENKLERI AYARLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    private void SetMuiltiplier(int multiplierInt)
     {
-        multiplierButtonText.text = textString;
+        slapBoardText.text = "POWER ->" + 50 * multiplierInt;
         multiplier = multiplierInt;
 
         if (multiplierInt == 1)
         {
-            multiplierImage.color = new Color32(231, 12, 12, 255);
+            slapBoardText.color = new Color32(231, 12, 12, 255);
         }
 
         if (multiplierInt == 2)
         {
-            multiplierImage.color = new Color32(255, 153, 21, 255);
+            slapBoardText.color = new Color32(255, 153, 21, 255);
         }
 
         if (multiplierInt == 3)
         {
-            multiplierImage.color = new Color32(250, 205, 51, 255);
+            slapBoardText.color = new Color32(250, 205, 51, 255);
         }
 
         if (multiplierInt == 4)
         {
-            multiplierImage.color = new Color32(105, 179, 76, 255);
+            slapBoardText.color = new Color32(105, 179, 76, 255);
+        }
+
+        if (multiplierInt == 5)
+        {
+            slapBoardText.color = new Color32(105, 179, 76, 255);
         }
     }
 
-    public void MultiplierButton(bool coroutineCheck)
+    public void SlapButton(bool coroutineCheck)
     {
         clickBonusCheck = true;
         StopCoroutine(HandTransform());
-        DOTween.Kill(arrowImage.transform);
-        multiplierButton.interactable = false;
+        DOTween.Kill(arrow.transform);
+        slapButton.SetActive(false);
 
         if (coroutineCheck)
         {
-            multiplierGameText.text = "You Won";
+            PlayerManagement.Instance.SlapTheBoss();
             //multiplierButtonText.text = PlayerManagement.Instance.currentLvMoneyAmount * multiplier + "$";
-            Debug.Log("test");
             //PlayerManagement.Instance.currentLvMoneyAmount *= multiplier;
             nextLevelButton.SetActive(true);
             /*PlayerPrefs.SetInt("TotalMoney", PlayerPrefs.GetInt("TotalMoney")
@@ -260,13 +289,11 @@ public class UIManager : MonoSingleton<UIManager>
             SetTotalMoney();
         }
     }
-    public void ResMultiplierButton()
+    public void ResSlapButton()
     {
         clickBonusCheck = false;
-        nextLevelButton.SetActive(false);
-        multiplierGameText.text = "Tap to Win";
-        multiplierButtonText.text = "Get 1X";
-        multiplierButton.interactable = true;
+        slapBoardText.text = "POWER -> 50";
+        slapButton.SetActive(true);
     }
 
     public void UIQuitGame()
