@@ -7,20 +7,25 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
 {
     [SerializeField] private RunnerScript runnerScript;
 
-    //player stats
+    [Header("Player Stats")]
     [SerializeField] private float minHealth = 100;
     [SerializeField] private float maxHealth = 600;
     [SerializeField] private float slapPower = 50;
     [SerializeField] private Vector3 finishLocation = new Vector3(0, 0.25f, 99);
     [SerializeField] private GameObject localMover;
-    [Space]
 
+
+    [Header("Boss Settings")]
     [SerializeField] private GameObject boss;
     [SerializeField] private BossManager bossManager;
-    [Space]
 
+
+    [Header("Mini Game Uthilities")]
     [SerializeField] private GameObject multiplierBar;
     [SerializeField] private Vector3 multiplierBarFinishLocation = new Vector3(0, 3.25f, 0.25f);
+    [Space]
+    [SerializeField] private Transform mainCamera;
+    [SerializeField] private CamFollower camFollower;
     private Vector3 multiplierBarFirstLocation = new Vector3(0, 10f, 0.25f);
 
     private bool canRun = true;
@@ -97,7 +102,7 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         sequence.Kill();
         sequence = DOTween.Sequence();
         sequence.Insert(1.1f, transform.DOJump(new Vector3(0, .25f, transform.position.z + 3.5f), 3, 1, 1.1f)
-            .OnComplete(() => { runnerScript.PlayAnimation("StructWalk", 1); }) );
+            .OnComplete(() => { runnerScript.PlayAnimation("StructWalk", 1); }));
 
         sequence.Append(transform.DOMove(finishLocation, 2.5f));
     }
@@ -114,25 +119,35 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     {
         //bar
         multiplierBar.SetActive(true);
-        sequenceCamAndBar.Append(multiplierBar.transform.DOLocalMove(multiplierBarFinishLocation, 1.5f));
-        sequenceCamAndBar.Join(multiplierBar.transform.DOLocalRotate(new Vector3(0, 120, 0), 1.5f, RotateMode.FastBeyond360)
-            .SetEase(Ease.Linear).SetLoops(2, LoopType.Restart));
 
-        //cam
+        sequenceCamAndBar.Append(multiplierBar.transform.DOLocalMove(multiplierBarFinishLocation, 1.5f));
+        sequenceCamAndBar.Join(multiplierBar.transform.DOLocalRotate(new Vector3(0, -60, 0), 1.5f, RotateMode.FastBeyond360)
+            .SetEase(Ease.Linear).SetLoops(2, LoopType.Restart));
+        sequenceCamAndBar.Join(camFollower.transform.DORotate(new Vector3(0, -30, 0), 1.5f)
+            .OnComplete(() => { UIManager.Instance.MoveMultiplierArrow(); }));
+
     }
 
     private void CallTheBoss()
     {
         Instantiate(boss, new Vector3(0, 15, 105), Quaternion.Euler(0, 180, 0));
         bossManager = GameObject.FindGameObjectWithTag("Boss").GetComponent<BossManager>();
-        bossManager.CallTheBoss();
+        bossManager.SpawnTheBoss();
     }
 
-    public void SlapTheBoss()
+    public void StartSlapping()
     {
-
+        StartCoroutine(SlapTheBoss());
     }
 
+    public IEnumerator SlapTheBoss()
+    {
+        runnerScript.PlayAnimation("Slap", 1);
+        yield return new WaitForSeconds(1.13f);
+        bossManager.BossTookHit();
+
+        yield return new WaitForSeconds(1.45f);
+    }
     public void ResetCharachter()
     {
         canRun = true;

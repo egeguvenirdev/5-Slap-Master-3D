@@ -8,42 +8,19 @@ using DG.Tweening;
 
 public class RunnerScript : MonoBehaviour
 {
+    [Header("Scripts and Transforms")]
     [SerializeField] private Transform model;
     [SerializeField] private Transform localMoverTarget;
     [SerializeField] private PathCreator pathCreator;
     [SerializeField] private SimpleAnimancer animancer;
     [SerializeField] private PlayerSwerve playerSwerve;
-    [Space]
 
-    [SerializeField] private string StartIdleAnimName = "StartIdle";
-    [SerializeField] private float StarIdleAnimSpeed = 1f;
-
-    [SerializeField] private string idleAnimName = "Idle";
-    [SerializeField] private float idleAnimSpeed = 1f;
-
-    [SerializeField] private string walkingAnimName = "Walking";
-    [SerializeField] private float walkingAnimSpeed = 1f;
-
-    [SerializeField] private string hitAnimName = "Hit";
-    [SerializeField] private float hitAnimSpeed = 1f;
-
-    [SerializeField] private string danceAnimName = "Dance";
-    [SerializeField] private float danceAnimSpeed = 1f;
-
-    [SerializeField] private string jumpeAnimName = "Jump";
-    [SerializeField] private float jumpAnimSpeed = 1f;
-
-    [SerializeField] private string structWalkingAnimName = "StructWalking";
-    [SerializeField] private float structWalkingAnimSpeed = 1f;
-
-    [SerializeField] private string currentAnimName = "Walking";
-    [Space]
-
+    [Header("Path Settings")]
     [SerializeField] private float distance = 0;
     [SerializeField] private float startDistance = 0;
     [SerializeField] private float clampLocalX = 2f;
-    [Space]
 
+    [Header("Run Settings")]
     [SerializeField] private float runSpeed = 2;
     [SerializeField] private float localTargetswipeSpeed = 2f;
     [SerializeField] private float swipeLerpSpeed = 2f;
@@ -53,7 +30,7 @@ public class RunnerScript : MonoBehaviour
     private bool canRun = false;
     private bool canSwerve = false;
     private bool moveEnabled = false;
-
+    private string currentAnimName = "Walking";
 
     void Awake()
     {
@@ -69,7 +46,7 @@ public class RunnerScript : MonoBehaviour
 
     private void Start()
     {
-        PlayAnimation(StartIdleAnimName, 1f);
+        PlayAnimation("StartIdle", 1f);
     }
 
     // Update is called once per frame
@@ -88,8 +65,8 @@ public class RunnerScript : MonoBehaviour
         {
             canRun = true;
             canSwerve = true;
-            PlayAnimation(walkingAnimName, 1f);
-            currentAnimName = walkingAnimName;
+            PlayAnimation("Walking", 1f);
+            currentAnimName = "Walking";
 
             distance += runSpeed * Time.deltaTime;
         }
@@ -97,8 +74,8 @@ public class RunnerScript : MonoBehaviour
         {
             canRun = false;
             //canSwerve = false;
-            PlayAnimation(idleAnimName, 1f);
-            currentAnimName = idleAnimName;
+            PlayAnimation("Idle", 1f);
+            currentAnimName = "Idle";
         }
     }
 
@@ -168,7 +145,7 @@ public class RunnerScript : MonoBehaviour
 
     public void ResetCharacter()
     {
-        PlayAnimation(StartIdleAnimName, 1f);
+        PlayAnimation("StartIdle", 1f);
         distance = 0;
         localMoverTarget.localPosition = new Vector3 (0, 0, 1f);
         canRun = false;

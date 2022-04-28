@@ -11,28 +11,25 @@ public class UIManager : MonoSingleton<UIManager>
 {
     private Bermuda.Runner.BermudaRunnerCharacter bermudaRunnerCharacter;
 
-    //Main UIs
+    [Header("Main UI's")]
     [SerializeField] private GameObject tapToPlayUI;
     [SerializeField] private GameObject nextLvMenuUI;
     [SerializeField] private GameObject restartMenuUI;
-    [Space]
 
-    //pause button ui uthilities
+    [Header("Sound and Toggle")]
     [SerializeField] private Toggle vibrationToggle;
     [SerializeField] private Toggle soundToggle;
-    [Space]
-    
-    //slap button
+
+    [Header("Slap Button")]
     [SerializeField] private GameObject slapButton;
     [SerializeField] private TMP_Text slapBoardText;
-    [Space]
 
-    //status texts UIs
+    [Header("Status UI Texts")]
     [SerializeField] private TMP_Text currentLV;
     [SerializeField] private TMP_Text totalMoneyText;
     [SerializeField] private GameObject nextLevelButton;
     [SerializeField] private Image healthImage;
-    [Space]
+
     private int multiplier;
     private int multiplierCounter = 0;
 
@@ -277,13 +274,13 @@ public class UIManager : MonoSingleton<UIManager>
         StopCoroutine(HandTransform());
         DOTween.Kill(arrow.transform);
         slapButton.SetActive(false);
-
+        ResSlapButton();
         if (coroutineCheck)
         {
-            PlayerManagement.Instance.SlapTheBoss();
+            PlayerManagement.Instance.StartSlapping();
             //multiplierButtonText.text = PlayerManagement.Instance.currentLvMoneyAmount * multiplier + "$";
             //PlayerManagement.Instance.currentLvMoneyAmount *= multiplier;
-            nextLevelButton.SetActive(true);
+
             /*PlayerPrefs.SetInt("TotalMoney", PlayerPrefs.GetInt("TotalMoney")
                 + PlayerManagement.Instance.currentLvMoneyAmount);*/
             SetTotalMoney();
@@ -291,6 +288,7 @@ public class UIManager : MonoSingleton<UIManager>
     }
     public void ResSlapButton()
     {
+        arrow.DOMoveX(-4.4f, 2);
         clickBonusCheck = false;
         slapBoardText.text = "POWER -> 50";
         slapButton.SetActive(true);
