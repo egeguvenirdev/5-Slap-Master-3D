@@ -46,7 +46,7 @@ public class RunnerScript : MonoBehaviour
 
     private void Start()
     {
-        PlayAnimation("StartIdle", 1f);
+        PlayAnimation("StartIdle");
     }
 
     // Update is called once per frame
@@ -65,7 +65,7 @@ public class RunnerScript : MonoBehaviour
         {
             canRun = true;
             canSwerve = true;
-            PlayAnimation("Walking", 1f);
+            PlayAnimation("Walking");
             currentAnimName = "Walking";
 
             distance += runSpeed * Time.deltaTime;
@@ -74,7 +74,7 @@ public class RunnerScript : MonoBehaviour
         {
             canRun = false;
             //canSwerve = false;
-            PlayAnimation("Idle", 1f);
+            PlayAnimation("Idle");
             currentAnimName = "Idle";
         }
     }
@@ -117,10 +117,9 @@ public class RunnerScript : MonoBehaviour
         }
     }
 
-    public void PlayAnimation(string animName, float animSpeed)
+    public void PlayAnimation(string animName)
     {
         animancer.PlayAnimation(animName);
-        animancer.SetStateSpeed(animSpeed);
 
         currentAnimName = animName;
     }
@@ -145,7 +144,7 @@ public class RunnerScript : MonoBehaviour
 
     public void ResetCharacter()
     {
-        PlayAnimation("StartIdle", 1f);
+        PlayAnimation("StartIdle");
         distance = 0;
         localMoverTarget.localPosition = new Vector3 (0, 0, 1f);
         canRun = false;

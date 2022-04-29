@@ -23,13 +23,15 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     [Header("Mini Game Uthilities")]
     [SerializeField] private GameObject multiplierBar;
     [SerializeField] private Vector3 multiplierBarFinishLocation = new Vector3(0, 3.25f, 0.25f);
+    private Vector3 multiplierBarFirstLocation = new Vector3(-3.8f, 10f, 2.5f);
     [Space]
     [SerializeField] private Transform mainCamera;
     [SerializeField] private CamFollower camFollower;
-    private Vector3 multiplierBarFirstLocation = new Vector3(0, 10f, 0.25f);
+
 
     private bool canRun = true;
     private float currentHealth;
+    private bool canSlap = false;
 
     Sequence sequence;
     Sequence sequenceLocalMover;
@@ -44,6 +46,7 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     // Update is called once per frame
     void Update()
     {
+
         if (Input.GetMouseButton(0) && canRun)
         {
             runnerScript.StartToRun(true);
@@ -52,6 +55,15 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         {
             runnerScript.StartToRun(false);
         }
+
+        if (Input.GetMouseButton(0) && canSlap)
+        {
+            UIManager.Instance.SlapButton();
+            StartSlapping();
+            canSlap = false;
+        }
+
+
     }
 
     public void AddHealth(int collectedHealth)
@@ -81,7 +93,7 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     {
         canRun = false;
         runnerScript.StartToRun(false);
-        runnerScript.PlayAnimation("StructWalk", 1);
+        runnerScript.PlayAnimation("StructWalk");
         RingWalk();
     }
 
@@ -89,7 +101,7 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     {
         sequence = DOTween.Sequence();
         sequenceLocalMover = DOTween.Sequence();
-        runnerScript.PlayAnimation("StructWalk", 1);
+        runnerScript.PlayAnimation("StructWalk");
 
         sequenceLocalMover.Append(localMover.transform.DOMove(finishLocation, 8));
         sequence.Append(transform.DOMove(finishLocation, 8));
@@ -97,12 +109,12 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
 
     public void RingJump()
     {
-        runnerScript.PlayAnimation("Jump", 1);
+        runnerScript.PlayAnimation("Jump");
 
         sequence.Kill();
         sequence = DOTween.Sequence();
         sequence.Insert(1.1f, transform.DOJump(new Vector3(0, .25f, transform.position.z + 3.5f), 3, 1, 1.1f)
-            .OnComplete(() => { runnerScript.PlayAnimation("StructWalk", 1); }));
+            .OnComplete(() => { runnerScript.PlayAnimation("StructWalk"); }));
 
         sequence.Append(transform.DOMove(finishLocation, 2.5f));
     }
@@ -110,9 +122,10 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     public void RingIdle()
     {
         sequence.Kill();
-        runnerScript.PlayAnimation("Idle", 1);
+        runnerScript.PlayAnimation("Idle");
         SetCamAndBar();
         CallTheBoss();
+        canSlap = true;
     }
 
     private void SetCamAndBar()
@@ -131,27 +144,54 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     private void CallTheBoss()
     {
         Instantiate(boss, new Vector3(0, 15, 105), Quaternion.Euler(0, 180, 0));
-        bossManager = GameObject.FindGameObjectWithTag("Boss").GetComponent<BossManager>();
+        bossManager = GameObject.FindGameObjectWithTag("Boss").GetComponent<BossManager>(); //AMELELIGI DUZETL "OFTYPE"
         bossManager.SpawnTheBoss();
     }
 
     public void StartSlapping()
     {
         StartCoroutine(SlapTheBoss());
+        multiplierBar.SetActive(false);
     }
 
     public IEnumerator SlapTheBoss()
     {
-        runnerScript.PlayAnimation("Slap", 1);
-        yield return new WaitForSeconds(1.13f);
-        bossManager.BossTookHit();
-
-        yield return new WaitForSeconds(1.45f);
+        yield return new WaitForSeconds(1.58f); 
+        runnerScript.PlayAnimation("Idle");
+        canSlap = false;
+        yield return new WaitForSeconds(1f);
+        runnerScript.PlayAnimation("Slap");
+        yield return new WaitForSeconds(1.1f);
+        Debug.Log(UIManager.Instance.multiplier);
+        bossManager.BossTookHit(UIManager.Instance.multiplier * 50);
+        yield return new WaitForSeconds(1.783f);
+        runnerScript.PlayAnimation("Idle");
     }
+
+    public void PlayerTookHit(int damage)
+    {
+        if (currentHealth - damage > 0)
+        {
+            currentHealth -= damage;
+            runnerScript.PlayAnimation("TakeHit");
+            canSlap = true;
+
+            multiplierBar.SetActive(true);
+            UIManager.Instance.MoveMultiplierArrow();
+        }
+        else
+        {
+            //burda geber
+        }
+    }
+
     public void ResetCharachter()
     {
+        canSlap = false;
         canRun = true;
         currentHealth = minHealth;
         runnerScript.ResetCharacter();
+        multiplierBar.transform.DOLocalMove(multiplierBarFirstLocation, 1f);
+        multiplierBar.SetActive(true);
     }
 }

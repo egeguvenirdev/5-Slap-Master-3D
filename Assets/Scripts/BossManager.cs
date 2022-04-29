@@ -6,6 +6,7 @@ using DG.Tweening;
 public class BossManager : MonoBehaviour
 {
     [SerializeField] private int bossHealth = 600;
+    [SerializeField] private int bossSlapPower = 200;
     [SerializeField] private Bermuda.Animation.SimpleAnimancer bossAnimancer;
 
     Sequence sequence;
@@ -39,13 +40,30 @@ public class BossManager : MonoBehaviour
 
     IEnumerator HitRoutine()
     {
-
-        yield return null;
+        yield return new WaitForSeconds(1.58f);
+        bossAnimancer.PlayAnimation("Idle");
+        yield return new WaitForSeconds(1f);
+        bossAnimancer.PlayAnimation("Slap");
+        yield return new WaitForSeconds(1.1f);
+        PlayerManagement.Instance.PlayerTookHit(bossSlapPower);
+        yield return new WaitForSeconds(1.783f);
+        bossAnimancer.PlayAnimation("Idle");
+        //playerManager.PlayerTookHit();
     }
 
-    public void BossTookHit()
+    public void BossTookHit(int damage)
     {
-        bossAnimancer.PlayAnimation("TakeHit");
-        StartCoroutine(HitRoutine());
+        if (bossHealth - damage > 0)
+        {
+            bossHealth -= damage;
+            bossAnimancer.PlayAnimation("TakeHit");
+        
+            StartCoroutine(HitRoutine());
+        }
+        else
+        {
+            //burda geber
+        }
+
     }
 }

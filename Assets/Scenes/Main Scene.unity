@@ -13295,12 +13295,12 @@ MonoBehaviour:
   restartMenuUI: {fileID: 5324423022130476624}
   vibrationToggle: {fileID: 1267262684591296278}
   soundToggle: {fileID: 1267262686555477023}
-  slapButton: {fileID: 1433734873}
   slapBoardText: {fileID: 1900048835}
   currentLV: {fileID: 5324423022715167656}
   totalMoneyText: {fileID: 7143013623535522190}
   nextLevelButton: {fileID: 1267262684787210025}
   healthImage: {fileID: 1301717208}
+  multiplier: 0
   progressBarImage: {fileID: 1941583725}
   arrow: {fileID: 602540673}
   isPaused: 0
@@ -18147,7 +18147,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6451341665356840470, guid: 8741789bdb90fb643a2af87679e59f1e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.79
+      value: -3.8
       objectReference: {fileID: 0}
     - target: {fileID: 6451341665356840470, guid: 8741789bdb90fb643a2af87679e59f1e, type: 3}
       propertyPath: m_LocalPosition.y
@@ -18155,7 +18155,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6451341665356840470, guid: 8741789bdb90fb643a2af87679e59f1e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.44
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 6451341665356840470, guid: 8741789bdb90fb643a2af87679e59f1e, type: 3}
       propertyPath: m_LocalRotation.w

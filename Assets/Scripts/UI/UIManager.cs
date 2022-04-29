@@ -21,7 +21,6 @@ public class UIManager : MonoSingleton<UIManager>
     [SerializeField] private Toggle soundToggle;
 
     [Header("Slap Button")]
-    [SerializeField] private GameObject slapButton;
     [SerializeField] private TMP_Text slapBoardText;
 
     [Header("Status UI Texts")]
@@ -30,7 +29,7 @@ public class UIManager : MonoSingleton<UIManager>
     [SerializeField] private GameObject nextLevelButton;
     [SerializeField] private Image healthImage;
 
-    private int multiplier;
+    public int multiplier;
     private int multiplierCounter = 0;
 
     //status texts
@@ -169,15 +168,14 @@ public class UIManager : MonoSingleton<UIManager>
 
     public void MoveMultiplierArrow()
     {
-        arrow.DOMoveX(-4.4f, 2);
-        arrow.DOMoveX(4.4f, 2).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo);
-        slapButton.SetActive(true);
+        arrow.DOLocalMoveX(-4.4f, 2);
+        arrow.DOLocalMoveX(4.4f, 2).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo);
         StartCoroutine(HandTransform());
     }
 
     IEnumerator HandTransform()
     {
-        float arrowXpos = arrow.position.x;
+        float arrowXpos = arrow.localPosition.x;
 
         if (arrowXpos > -4.5f && arrowXpos < -3.5f)
         {
@@ -231,7 +229,7 @@ public class UIManager : MonoSingleton<UIManager>
         }
         else
         {
-            SlapButton(true);
+            SlapButton();
         }
     }
 
@@ -268,30 +266,26 @@ public class UIManager : MonoSingleton<UIManager>
         }
     }
 
-    public void SlapButton(bool coroutineCheck)
+    public void SlapButton()
     {
         clickBonusCheck = true;
         StopCoroutine(HandTransform());
         DOTween.Kill(arrow.transform);
-        slapButton.SetActive(false);
         ResSlapButton();
-        if (coroutineCheck)
-        {
-            PlayerManagement.Instance.StartSlapping();
-            //multiplierButtonText.text = PlayerManagement.Instance.currentLvMoneyAmount * multiplier + "$";
-            //PlayerManagement.Instance.currentLvMoneyAmount *= multiplier;
 
-            /*PlayerPrefs.SetInt("TotalMoney", PlayerPrefs.GetInt("TotalMoney")
-                + PlayerManagement.Instance.currentLvMoneyAmount);*/
-            SetTotalMoney();
-        }
+        //multiplierButtonText.text = PlayerManagement.Instance.currentLvMoneyAmount * multiplier + "$";
+        //PlayerManagement.Instance.currentLvMoneyAmount *= multiplier;
+
+        /*PlayerPrefs.SetInt("TotalMoney", PlayerPrefs.GetInt("TotalMoney")
+            + PlayerManagement.Instance.currentLvMoneyAmount);*/
+        SetTotalMoney();
+
     }
     public void ResSlapButton()
     {
         arrow.DOMoveX(-4.4f, 2);
         clickBonusCheck = false;
         slapBoardText.text = "POWER -> 50";
-        slapButton.SetActive(true);
     }
 
     public void UIQuitGame()
