@@ -156,11 +156,13 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
 
     public IEnumerator SlapTheBoss()
     {
+        canSlap = false;
         yield return new WaitForSeconds(1.58f); 
         runnerScript.PlayAnimation("Idle");
-        canSlap = false;
+
         yield return new WaitForSeconds(1f);
         runnerScript.PlayAnimation("Slap");
+
         yield return new WaitForSeconds(1.1f);
         Debug.Log(UIManager.Instance.multiplier);
         bossManager.BossTookHit(UIManager.Instance.multiplier * 50);
