@@ -151,7 +151,7 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     public void StartSlapping()
     {
         StartCoroutine(SlapTheBoss());
-        multiplierBar.SetActive(false);
+       // multiplierBar.SetActive(false);
     }
 
     public IEnumerator SlapTheBoss()
@@ -178,7 +178,7 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
             runnerScript.PlayAnimation("TakeHit");
             canSlap = true;
 
-            multiplierBar.SetActive(true);
+            //multiplierBar.SetActive(true);
             UIManager.Instance.MoveMultiplierArrow();
         }
         else

@@ -168,7 +168,7 @@ public class UIManager : MonoSingleton<UIManager>
 
     public void MoveMultiplierArrow()
     {
-        arrow.DOLocalMoveX(-4.4f, 2);
+        arrow.DOLocalMoveX(-4.4f, 0);
         arrow.DOLocalMoveX(4.4f, 2).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo);
         StartCoroutine(HandTransform());
     }
@@ -283,7 +283,6 @@ public class UIManager : MonoSingleton<UIManager>
     }
     public void ResSlapButton()
     {
-        arrow.DOMoveX(-4.4f, 2);
         clickBonusCheck = false;
         slapBoardText.text = "POWER -> 50";
     }
