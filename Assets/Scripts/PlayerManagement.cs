@@ -10,28 +10,27 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     [Header("Player Stats")]
     [SerializeField] private float minHealth = 100;
     [SerializeField] private float maxHealth = 600;
-    [SerializeField] private float slapPower = 50;
+    [SerializeField] private float slapPower = 75;
     [SerializeField] private Vector3 finishLocation = new Vector3(0, 0.25f, 99);
     [SerializeField] private GameObject localMover;
-
 
     [Header("Boss Settings")]
     [SerializeField] private GameObject boss;
     [SerializeField] private BossManager bossManager;
 
-
     [Header("Mini Game Uthilities")]
     [SerializeField] private GameObject multiplierBar;
-    [SerializeField] private Vector3 multiplierBarFinishLocation = new Vector3(0, 3.25f, 0.25f);
-    private Vector3 multiplierBarFirstLocation = new Vector3(-3.8f, 10f, 2.5f);
+    [SerializeField] private Transform multiplierBarSpawnPosition;
+    public Transform bossSpawnPosition;
+    private Vector3 multiplierBarFinishLocation;
     [Space]
     [SerializeField] private Transform mainCamera;
     [SerializeField] private CamFollower camFollower;
 
-
     private bool canRun = true;
     private float currentHealth;
     private bool canSlap = false;
+    private bool isItFirstSlap = true;
 
     Sequence sequence;
     Sequence sequenceLocalMover;
@@ -43,7 +42,6 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         DOTween.Init();
     }
 
-    // Update is called once per frame
     void Update()
     {
 
@@ -62,8 +60,6 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
             StartSlapping();
             canSlap = false;
         }
-
-
     }
 
     public void AddHealth(int collectedHealth)
@@ -131,60 +127,82 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     private void SetCamAndBar()
     {
         //bar
+        multiplierBarSpawnPosition = GameObject.FindGameObjectWithTag("BarSpawnLoc").transform;
         multiplierBar.SetActive(true);
 
-        sequenceCamAndBar.Append(multiplierBar.transform.DOLocalMove(multiplierBarFinishLocation, 1.5f));
-        sequenceCamAndBar.Join(multiplierBar.transform.DOLocalRotate(new Vector3(0, -60, 0), 1.5f, RotateMode.FastBeyond360)
-            .SetEase(Ease.Linear).SetLoops(2, LoopType.Restart));
-        sequenceCamAndBar.Join(camFollower.transform.DORotate(new Vector3(0, -30, 0), 1.5f)
-            .OnComplete(() => { UIManager.Instance.MoveMultiplierArrow(); }));
+        multiplierBarFinishLocation = new Vector3(multiplierBarSpawnPosition.position.x, 2.5f, multiplierBarSpawnPosition.position.z);
+        multiplierBar.SetActive(true);
 
+        sequenceCamAndBar.Append(multiplierBar.transform.DOMove(multiplierBarFinishLocation, 1.5f));
+        sequenceCamAndBar.Join(multiplierBar.transform.DORotate(new Vector3(0, -60, 0), 1.5f, RotateMode.FastBeyond360)
+            .SetEase(Ease.Linear).SetLoops(2, LoopType.Restart));
+        sequenceCamAndBar.Join(camFollower.transform.DORotate(new Vector3(0, -45, 0), 1.5f)
+            .OnComplete(() => { UIManager.Instance.MoveMultiplierArrow(); }));
     }
 
     private void CallTheBoss()
     {
-        Instantiate(boss, new Vector3(0, 15, 105), Quaternion.Euler(0, 180, 0));
-        bossManager = GameObject.FindGameObjectWithTag("Boss").GetComponent<BossManager>(); //AMELELIGI DUZETL "OFTYPE"
+        bossSpawnPosition = GameObject.FindGameObjectWithTag("BossSpawnLoc").transform;
+        boss.transform.position = bossSpawnPosition.position;
         bossManager.SpawnTheBoss();
     }
 
     public void StartSlapping()
     {
         StartCoroutine(SlapTheBoss());
-       // multiplierBar.SetActive(false);
     }
 
     public IEnumerator SlapTheBoss()
     {
         canSlap = false;
-        yield return new WaitForSeconds(1.58f); 
+        if (isItFirstSlap)
+        {
+            isItFirstSlap = false;
+        }
+        else
+        {
+            yield return new WaitForSeconds(1.58f);
+        }
+        
         runnerScript.PlayAnimation("Idle");
 
         yield return new WaitForSeconds(1f);
         runnerScript.PlayAnimation("Slap");
 
         yield return new WaitForSeconds(1.1f);
-        Debug.Log(UIManager.Instance.multiplier);
-        bossManager.BossTookHit(UIManager.Instance.multiplier * 50);
+
+        bossManager.BossTookHit(UIManager.Instance.multiplier * slapPower);
         yield return new WaitForSeconds(1.783f);
         runnerScript.PlayAnimation("Idle");
     }
 
-    public void PlayerTookHit(int damage)
+    public void PlayerTookHit(float damage)
     {
         if (currentHealth - damage > 0)
         {
+            UIManager.Instance.SetSlapUIs("Player");
             currentHealth -= damage;
             runnerScript.PlayAnimation("TakeHit");
             canSlap = true;
 
-            //multiplierBar.SetActive(true);
             UIManager.Instance.MoveMultiplierArrow();
         }
         else
         {
-            //burda geber
+            UIManager.Instance.TurnOnOffUIs(false);
+            runnerScript.PlayAnimation("Death");
+            UIManager.Instance.RestartButtonUI();
         }
+    }
+
+    public float ReturnHealth()
+    {
+        return currentHealth / maxHealth;
+    }
+
+    public float ReturnPower()
+    {
+        return slapPower;
     }
 
     public void ResetCharachter()
@@ -192,8 +210,9 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         canSlap = false;
         canRun = true;
         currentHealth = minHealth;
+        isItFirstSlap = true;
         runnerScript.ResetCharacter();
-        multiplierBar.transform.DOLocalMove(multiplierBarFirstLocation, 1f);
-        multiplierBar.SetActive(true);
+        boss.SetActive(false);
+        multiplierBar.SetActive(false);
     }
 }

@@ -7,6 +7,9 @@ TagManager:
   - FoodParticle
   - ObstacleParticle
   - Boss
+  - BossCanvas
+  - BarSpawnLoc
+  - BossSpawnLoc
   layers:
   - Default
   - TransparentFX

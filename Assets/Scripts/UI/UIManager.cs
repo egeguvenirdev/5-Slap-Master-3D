@@ -29,11 +29,16 @@ public class UIManager : MonoSingleton<UIManager>
     [SerializeField] private GameObject nextLevelButton;
     [SerializeField] private Image healthImage;
 
-    public int multiplier;
+    public float multiplier;
     private int multiplierCounter = 0;
 
     //status texts
+    [SerializeField] private GameObject playerHealtUI;
+    [SerializeField] private GameObject bossHealtUI;
     [SerializeField] private Image progressBarImage;
+    [SerializeField] private Image playerHealthImage;
+    [SerializeField] private Image bossHealthImage;
+    
     [Space]
 
     //randommultiplier selection
@@ -41,6 +46,7 @@ public class UIManager : MonoSingleton<UIManager>
     private bool clickBonusCheck = false;
     [Space]
 
+    private BossManager bossManager;
     public bool isPaused;
 
     private void Awake()
@@ -233,11 +239,10 @@ public class UIManager : MonoSingleton<UIManager>
         }
     }
 
-
     //RENKLERI AYARLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-    private void SetMuiltiplier(int multiplierInt)
+    private void SetMuiltiplier(float multiplierInt)
     {
-        slapBoardText.text = "POWER ->" + 50 * multiplierInt;
+        slapBoardText.text = "POWER ->" + PlayerManagement.Instance.ReturnPower() * multiplierInt;
         multiplier = multiplierInt;
 
         if (multiplierInt == 1)
@@ -281,6 +286,36 @@ public class UIManager : MonoSingleton<UIManager>
         SetTotalMoney();
 
     }
+
+    public void TurnOnOffUIs(bool check)
+    {
+        if (check)
+        {
+            bossManager = GameObject.FindObjectOfType<BossManager>();
+            playerHealtUI.SetActive(true);
+            bossHealtUI.SetActive(true);
+        }
+        else
+        {
+            playerHealtUI.SetActive(false);
+            bossHealtUI.SetActive(false);
+        }
+    }
+
+    public void SetSlapUIs(string playerCheck)
+    {
+        if (playerCheck == "Player")
+        {
+            playerHealthImage.fillAmount = PlayerManagement.Instance.ReturnHealth();
+            TurnOnOffUIs(true);
+        }
+
+        if (playerCheck == "Boss")
+        {
+            bossHealthImage.fillAmount = bossManager.ReturnHealth();
+        }
+    }
+
     public void ResSlapButton()
     {
         clickBonusCheck = false;
