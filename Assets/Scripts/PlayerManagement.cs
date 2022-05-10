@@ -53,7 +53,6 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         {
             runnerScript.StartToRun(false);
         }
-
         if (Input.GetMouseButton(0) && canSlap)
         {
             UIManager.Instance.SlapButton();
@@ -72,7 +71,7 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
             //burda geber
         }
 
-        if (currentHealth + collectedHealth > 600)
+        if (currentHealth > 600)
         {
             currentHealth = 600;
         }
@@ -89,6 +88,7 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     {
         canRun = false;
         runnerScript.StartToRun(false);
+        UIManager.Instance.SetActiveProgressBar(false);
         runnerScript.PlayAnimation("StructWalk");
         RingWalk();
     }
@@ -155,24 +155,15 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     public IEnumerator SlapTheBoss()
     {
         canSlap = false;
-        if (isItFirstSlap)
-        {
-            isItFirstSlap = false;
-        }
-        else
-        {
-            yield return new WaitForSeconds(1.58f);
-        }
-        
-        runnerScript.PlayAnimation("Idle");
 
-        yield return new WaitForSeconds(1f);
+        //hit boss
         runnerScript.PlayAnimation("Slap");
-
-        yield return new WaitForSeconds(1.1f);
-
+        yield return new WaitForSeconds(1.1f); //wait for the exact hit moment
         bossManager.BossTookHit(UIManager.Instance.multiplier * slapPower);
-        yield return new WaitForSeconds(1.783f);
+        yield return new WaitForSeconds(1.01f);
+        bossManager.PlayAnimation("Idle");
+
+        yield return new WaitForSeconds(.573f);
         runnerScript.PlayAnimation("Idle");
     }
 
@@ -180,8 +171,8 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     {
         if (currentHealth - damage > 0)
         {
-            UIManager.Instance.SetSlapUIs("Player");
             currentHealth -= damage;
+            UIManager.Instance.SetHealthUIs();
             runnerScript.PlayAnimation("TakeHit");
             canSlap = true;
 
@@ -194,6 +185,12 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
             UIManager.Instance.RestartButtonUI();
         }
     }
+
+    public void PlayAnimation(string animName)
+    {
+        runnerScript.PlayAnimation(animName);
+    }
+
 
     public float ReturnHealth()
     {
@@ -214,5 +211,8 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         runnerScript.ResetCharacter();
         boss.SetActive(false);
         multiplierBar.SetActive(false);
+        UIManager.Instance.SetProgress(0);
+        UIManager.Instance.SetActiveProgressBar(true);
+
     }
 }

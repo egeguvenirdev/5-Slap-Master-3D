@@ -521,6 +521,7 @@ GameObject:
   - component: {fileID: 4830859117577435834}
   - component: {fileID: 2207138465813199480}
   - component: {fileID: 2207138465813199481}
+  - component: {fileID: -4032378777918436898}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Boss
@@ -615,6 +616,22 @@ MonoBehaviour:
   - {fileID: -203655887218126122, guid: aa577777706ff7040be3c44ada18857e, type: 3}
   - {fileID: -203655887218126122, guid: 01914f33affa961438d7451267b671a8, type: 3}
   _playDefault: 0
+--- !u!54 &-4032378777918436898
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2207138465813199482}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 1
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 2
+  m_CollisionDetection: 0
 --- !u!1 &2326652929025570082
 GameObject:
   m_ObjectHideFlags: 0

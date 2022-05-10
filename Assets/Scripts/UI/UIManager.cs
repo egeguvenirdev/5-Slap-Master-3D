@@ -36,9 +36,10 @@ public class UIManager : MonoSingleton<UIManager>
     [SerializeField] private GameObject playerHealtUI;
     [SerializeField] private GameObject bossHealtUI;
     [SerializeField] private Image progressBarImage;
+    [SerializeField] private GameObject progressBar;
     [SerializeField] private Image playerHealthImage;
     [SerializeField] private Image bossHealthImage;
-    
+
     [Space]
 
     //randommultiplier selection
@@ -165,6 +166,14 @@ public class UIManager : MonoSingleton<UIManager>
     public void SetProgress(float progress)
     {
         progressBarImage.fillAmount = progress;
+    }
+
+    public void SetActiveProgressBar(bool check)
+    {
+        if(check)
+            progressBar.SetActive(true);
+        else
+            progressBar.SetActive(false);
     }
 
     public void SetTotalMoney()
@@ -302,18 +311,12 @@ public class UIManager : MonoSingleton<UIManager>
         }
     }
 
-    public void SetSlapUIs(string playerCheck)
+    public void SetHealthUIs()
     {
-        if (playerCheck == "Player")
-        {
-            playerHealthImage.fillAmount = PlayerManagement.Instance.ReturnHealth();
-            TurnOnOffUIs(true);
-        }
-
-        if (playerCheck == "Boss")
-        {
-            bossHealthImage.fillAmount = bossManager.ReturnHealth();
-        }
+        playerHealthImage.fillAmount = PlayerManagement.Instance.ReturnHealth();
+        //Debug.Log(PlayerManagement.Instance.ReturnHealth());
+        bossHealthImage.fillAmount = bossManager.ReturnHealth();
+        //Debug.Log(bossHealthImage.fillAmount);
     }
 
     public void ResSlapButton()

@@ -3207,15 +3207,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   runnerScript: {fileID: 480737494}
   minHealth: 100
-  maxHealth: 100
+  maxHealth: 600
   slapPower: 75
   finishLocation: {x: 0, y: 0.25, z: 99}
   localMover: {fileID: 502628370}
   boss: {fileID: 2207138465813199482, guid: 6d8da902b9998ce4d92f0aefae59818e, type: 3}
   bossManager: {fileID: 24967981}
   multiplierBar: {fileID: 1375718946}
-  multiplierBarSpawnPosition: {fileID: 0}
-  bossSpawnPosition: {fileID: 0}
+  multiplierBarSpawnPosition: {fileID: 541288445}
+  bossSpawnPosition: {fileID: 427911516}
   mainCamera: {fileID: 1336752918}
   camFollower: {fileID: 1336752917}
 --- !u!114 &480737496
@@ -11904,7 +11904,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1579219828874748096, guid: 6d8da902b9998ce4d92f0aefae59818e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.9920185
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1579219828874748096, guid: 6d8da902b9998ce4d92f0aefae59818e, type: 3}
       propertyPath: m_LocalPosition.y
@@ -13778,6 +13778,7 @@ MonoBehaviour:
   playerHealtUI: {fileID: 591063810}
   bossHealtUI: {fileID: 1730609362}
   progressBarImage: {fileID: 1941583725}
+  progressBar: {fileID: 365543606}
   playerHealthImage: {fileID: 1421632417}
   bossHealthImage: {fileID: 1441538835}
   arrow: {fileID: 602540673}

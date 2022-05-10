@@ -55,8 +55,8 @@ public class CollidableObjects : MonoBehaviour
             particle.SetActive(true);
             particle.GetComponent<ParticleSystem>().Play();
 
-            PlayerManagement.Instance.AddHealth(-10);
-            runnerScript.DodgeBack();
+            PlayerManagement.Instance.AddHealth(-50);
+            runnerScript.DodgeBack(); //DUZENLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
         }
 
         if (objectType == ObjectType.FinishLine)

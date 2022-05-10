@@ -20,15 +20,13 @@ public class BossManager : MonoBehaviour
 
     public void SpawnTheBoss()
     {
-        bossMaxHealth += PlayerPrefs.GetInt("HCLevel") * 50 ;
+        bossMaxHealth += PlayerPrefs.GetInt("HCLevel") * 50;
         bossCurrentHealth = bossMaxHealth;
         sequence = DOTween.Sequence();
 
         sequence.Append(transform.DOJump(new Vector3(0, .25f, PlayerManagement.Instance.bossSpawnPosition.position.z - 5.5f), 3, 1, 2.5f)
-            .OnStart(() => { bossAnimancer.PlayAnimation("Fall"); })
-            .OnComplete(() => { UIManager.Instance.TurnOnOffUIs(true); }));
+            .OnStart(() => { bossAnimancer.PlayAnimation("Fall"); }) );
         StartCoroutine(LandingSequence());
-
     }
 
     IEnumerator LandingSequence()
@@ -38,46 +36,48 @@ public class BossManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.45f);
         bossAnimancer.PlayAnimation("Idle");
-
-        yield return null;
+        UIManager.Instance.TurnOnOffUIs(true);
+        UIManager.Instance.SetHealthUIs();
     }
 
     IEnumerator HitRoutine()
     {
-        if (isItFirstSlap)
-        {
-            isItFirstSlap = false;
-        }
-        else
-        {
-            yield return new WaitForSeconds(1.58f);
-        }
-        bossAnimancer.PlayAnimation("Idle");
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1.58f);
+
         bossAnimancer.PlayAnimation("Slap");
-        yield return new WaitForSeconds(1.1f);
+        yield return new WaitForSeconds(1.1f); //wait for the exact hit moment
         PlayerManagement.Instance.PlayerTookHit(bossSlapPower);
-        yield return new WaitForSeconds(1.783f);
+        yield return new WaitForSeconds(1.01f);
+        PlayerManagement.Instance.PlayAnimation("Idle");
+
+        yield return new WaitForSeconds(.573f);
         bossAnimancer.PlayAnimation("Idle");
-        //playerManager.PlayerTookHit();
     }
 
     public void BossTookHit(float damage)
     {
         if (bossCurrentHealth - damage > 0)
         {
-            UIManager.Instance.SetSlapUIs("Boss");
             bossCurrentHealth -= damage;
+            UIManager.Instance.SetHealthUIs();
             bossAnimancer.PlayAnimation("TakeHit");
-        
+
             StartCoroutine(HitRoutine());
         }
         else
         {
             UIManager.Instance.TurnOnOffUIs(false);
+
+            //BURDA GEBER
         }
 
     }
+
+    public void PlayAnimation(string animName)
+    {
+        bossAnimancer.PlayAnimation(animName);
+    }
+
     public float ReturnHealth()
     {
         return bossCurrentHealth / bossMaxHealth;
