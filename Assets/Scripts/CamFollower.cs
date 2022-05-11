@@ -6,6 +6,7 @@ public class CamFollower : MonoBehaviour
 {
     private Transform targetTransform = null;
     [SerializeField] private Transform player;
+    [SerializeField] private Transform boss;
     [SerializeField] private Vector3 offset;
     [SerializeField] private float playerFollowSpeed = 0.5f;
 
@@ -17,8 +18,17 @@ public class CamFollower : MonoBehaviour
             targetTransform = player;
         }
 
-        Vector3 targetPosition = player.transform.position + offset;
-        transform.position = Vector3.Lerp(transform.position, targetPosition, playerFollowSpeed);
+        if(targetTransform == player)
+        {
+            Vector3 targetPosition = player.position + offset;
+            transform.position = Vector3.Lerp(transform.position, targetPosition, playerFollowSpeed);
+        }
+        else
+        {
+            Vector3 targetPosition = boss.position + offset;
+            transform.position = Vector3.Lerp(transform.position, targetPosition, playerFollowSpeed);
+        }
+        
     }
 
     public void SwitchTarget(Transform newTargetTransform)

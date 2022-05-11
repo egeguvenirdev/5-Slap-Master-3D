@@ -119,12 +119,12 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     {
         sequence.Kill();
         runnerScript.PlayAnimation("Idle");
-        SetCamAndBar();
+        SetBarAndCam();
         CallTheBoss();
         canSlap = true;
     }
 
-    private void SetCamAndBar()
+    private void SetBarAndCam()
     {
         //bar
         multiplierBarSpawnPosition = GameObject.FindGameObjectWithTag("BarSpawnLoc").transform;
@@ -138,6 +138,12 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
             .SetEase(Ease.Linear).SetLoops(2, LoopType.Restart));
         sequenceCamAndBar.Join(camFollower.transform.DORotate(new Vector3(0, -45, 0), 1.5f)
             .OnComplete(() => { UIManager.Instance.MoveMultiplierArrow(); }));
+    }
+
+    public void SetBossFollowCam()
+    {
+        camFollower.SwitchTarget(boss.transform);
+        camFollower.transform.DORotate(new Vector3(0, 0, 0), 1f);
     }
 
     private void CallTheBoss()
@@ -157,6 +163,7 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         canSlap = false;
 
         //hit boss
+        yield return new WaitForSeconds(1.1f);
         runnerScript.PlayAnimation("Slap");
         yield return new WaitForSeconds(1.1f); //wait for the exact hit moment
         bossManager.BossTookHit(UIManager.Instance.multiplier * slapPower);
@@ -186,6 +193,13 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         }
     }
 
+    public void WinStuation()
+    {
+        StopCoroutine(SlapTheBoss());
+        camFollower.SwitchTarget(boss.transform);
+        camFollower.transform.DORotate(new Vector3(0, 0, 0), 1f);
+    }
+
     public void PlayAnimation(string animName)
     {
         runnerScript.PlayAnimation(animName);
@@ -209,7 +223,8 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         currentHealth = minHealth;
         isItFirstSlap = true;
         runnerScript.ResetCharacter();
-        boss.SetActive(false);
+        camFollower.SwitchTarget(transform);
+        boss.transform.position = new Vector3(0, 0, -20);
         multiplierBar.SetActive(false);
         UIManager.Instance.SetProgress(0);
         UIManager.Instance.SetActiveProgressBar(true);

@@ -66,8 +66,12 @@ public class BossManager : MonoBehaviour
         }
         else
         {
+            float pathRange = (damage - bossCurrentHealth) / 10;
             UIManager.Instance.TurnOnOffUIs(false);
-
+            PlayerManagement.Instance.SetBossFollowCam();
+            bossAnimancer.PlayAnimation("Fly");
+            transform.DOJump(new Vector3(0, 0.125f, (120 + (7.5f * (int)pathRange))), 10, 1, 5).SetSpeedBased()
+                .OnComplete(() => { bossAnimancer.PlayAnimation("FallImpact"); });
             //BURDA GEBER
         }
 
