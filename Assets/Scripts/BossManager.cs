@@ -10,8 +10,6 @@ public class BossManager : MonoBehaviour
     [SerializeField] private float bossSlapPower = 200;
     [SerializeField] private Bermuda.Animation.SimpleAnimancer bossAnimancer;
 
-    private bool isItFirstSlap = true;
-    private Vector3 slidePosition;
     Sequence sequence;
 
     void Start()
@@ -49,11 +47,9 @@ public class BossManager : MonoBehaviour
 
         bossAnimancer.PlayAnimation("Slap");
         yield return new WaitForSeconds(1.1f); //wait for the exact hit moment
-        PlayerManagement.Instance.PlayerTookHit(bossSlapPower);
-        yield return new WaitForSeconds(1.01f);
-        PlayerManagement.Instance.PlayAnimation("Idle");
+        PlayerManagement.Instance.PlayerTookHit(bossSlapPower);       
 
-        yield return new WaitForSeconds(.573f);
+        yield return new WaitForSeconds(1.574f);
         bossAnimancer.PlayAnimation("Idle");
     }
      IEnumerator TakeSlapRoutine()
@@ -94,7 +90,13 @@ public class BossManager : MonoBehaviour
         sequence = DOTween.Sequence();
         Vector3 slidePosition = new Vector3(transform.position.x, transform.position.y, transform.position.z + Random.Range(2, 10));
         sequence.Append(transform.DOMove(slidePosition, 1)
-                .OnComplete(() => { UIManager.Instance.NextLvUI(); }));
+                .OnComplete(() => { BossLastLocation(); }));
+    }
+
+    public void BossLastLocation()
+    {
+        UIManager.Instance.SetTotalMoney();
+        UIManager.Instance.NextLvUI();
     }
 
     public void PlayAnimation(string animName)

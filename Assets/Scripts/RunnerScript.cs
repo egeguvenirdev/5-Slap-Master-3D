@@ -149,6 +149,11 @@ public class RunnerScript : MonoBehaviour
         canSwerve = true;
     }
 
+    public void CanSwerve()
+    {
+        canSwerve = false;
+    }
+
     public void ResetCharacter()
     {
         PlayAnimation("StartIdle");

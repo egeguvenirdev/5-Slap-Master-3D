@@ -19,7 +19,6 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
 
     [Header("Mini Game Uthilities")]
     [SerializeField] private GameObject multiplierBar;
-    private Transform multiplierBarSpawnPosition;
     private Vector3 finishLocation;
     [Space]
     [SerializeField] private Transform mainCamera;
@@ -36,7 +35,6 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
 
     void Start()
     {
-        multiplierBarSpawnPosition = null;
         currentHealth = minHealth;
         DOTween.Init();
     }
@@ -67,7 +65,11 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         if (currentHealth <= 0)
         {
             currentHealth = 0;
-            //burda geber
+            canRun = false;
+            runnerScript.StartToRun(false);
+            runnerScript.CanSwerve();
+            runnerScript.PlayAnimation("Death");
+            UIManager.Instance.RestartButtonUI();
         }
 
         if (currentHealth > 600)
@@ -164,10 +166,17 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         runnerScript.PlayAnimation("Idle");
     }
 
+    IEnumerator TakeSlapRoutine()
+    {
+        yield return new WaitForSeconds(1.01f);
+        runnerScript.PlayAnimation("Idle");
+    }
+
     public void PlayerTookHit(float damage)
     {
         if (currentHealth - damage > 0)
         {
+            StartCoroutine(TakeSlapRoutine());
             currentHealth -= damage;
             UIManager.Instance.SetHealthUIs();
             runnerScript.PlayAnimation("TakeHit");

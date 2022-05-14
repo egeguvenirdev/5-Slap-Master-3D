@@ -86,16 +86,17 @@ public class UIManager : MonoSingleton<UIManager>
 
             HCLevelManager.Instance.LevelUp();
             LevelText();
-            HCLevelManager.Instance.GenerateCurrentLevel();
+            HCLevelManager.Instance.GenerateCurrentLevel(); //SAHNEYI YUKLE BASTAN
         }
 
         if (restartMenuUI.activeSelf)
         {
             restartMenuUI.SetActive(false);
             isPaused = false;
-
-            SetTotalMoney();
-
+            Debug.Log("YUKLEME");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            HCLevelManager.Instance.GenerateCurrentLevel();
+            Debug.Log("YUKLEMEME");
         }
     }
 
@@ -285,14 +286,6 @@ public class UIManager : MonoSingleton<UIManager>
         StopCoroutine(HandTransform());
         DOTween.Kill(arrow.transform);
         ResSlapButton();
-
-        //multiplierButtonText.text = PlayerManagement.Instance.currentLvMoneyAmount * multiplier + "$";
-        //PlayerManagement.Instance.currentLvMoneyAmount *= multiplier;
-
-        /*PlayerPrefs.SetInt("TotalMoney", PlayerPrefs.GetInt("TotalMoney")
-            + PlayerManagement.Instance.currentLvMoneyAmount);*/
-        SetTotalMoney();
-
     }
 
     public void TurnOnOffUIs(bool check)
