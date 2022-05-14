@@ -5,9 +5,17 @@ using UnityEngine;
 public class RingTrigger : MonoBehaviour
 {
     [SerializeField] private bool isFirstTrigger;
+    private Collider col;
     // Start is called before the first frame update
+
+    private void Start()
+    {
+        col = GetComponent<Collider>();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
+        col.enabled = false;
         if (isFirstTrigger)
         {
             PlayerManagement.Instance.RingJump();
@@ -16,5 +24,6 @@ public class RingTrigger : MonoBehaviour
         {
             PlayerManagement.Instance.RingIdle();
         }
+
     }
 }

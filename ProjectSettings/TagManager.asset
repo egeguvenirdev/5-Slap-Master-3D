@@ -10,6 +10,7 @@ TagManager:
   - BossCanvas
   - BarSpawnLoc
   - BossSpawnLoc
+  - FinalTargetLoc
   layers:
   - Default
   - TransparentFX

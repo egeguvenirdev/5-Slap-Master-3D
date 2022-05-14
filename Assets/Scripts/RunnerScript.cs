@@ -124,6 +124,13 @@ public class RunnerScript : MonoBehaviour
         currentAnimName = animName;
     }
 
+    public void PlayAnimation(string animName, float speed)
+    {
+        animancer.PlayAnimation(animName);
+        animancer.SetStateSpeed(speed);
+        currentAnimName = animName;
+    }
+
     public void DodgeBack()
     {
         StartCoroutine(DodgeBackProcess());

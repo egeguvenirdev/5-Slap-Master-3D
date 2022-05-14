@@ -108,7 +108,6 @@ public class UIManager : MonoSingleton<UIManager>
             isPaused = true;
             //collectedMoneyText.text = "" + PlayerManagement.Instance.currentLvMoneyAmount + "$";
         }
-        Invoke("MoveMultiplierArrow", 0.5f);
     }
 
     public void RestartButtonUI()
@@ -184,7 +183,7 @@ public class UIManager : MonoSingleton<UIManager>
     public void MoveMultiplierArrow()
     {
         arrow.DOLocalMoveX(-4.4f, 0);
-        arrow.DOLocalMoveX(4.4f, 2).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo);
+        arrow.DOLocalMoveX(4.4f, 2).SetEase(Ease.InOutQuint).SetLoops(-1, LoopType.Yoyo);
         StartCoroutine(HandTransform());
     }
 

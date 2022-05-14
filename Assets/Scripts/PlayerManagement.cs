@@ -11,7 +11,6 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     [SerializeField] private float minHealth = 100;
     [SerializeField] private float maxHealth = 600;
     [SerializeField] private float slapPower = 75;
-    [SerializeField] private Vector3 finishLocation = new Vector3(0, 0.25f, 99);
     [SerializeField] private GameObject localMover;
 
     [Header("Boss Settings")]
@@ -20,9 +19,8 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
 
     [Header("Mini Game Uthilities")]
     [SerializeField] private GameObject multiplierBar;
-    [SerializeField] private Transform multiplierBarSpawnPosition;
-    public Transform bossSpawnPosition;
-    private Vector3 multiplierBarFinishLocation;
+    private Transform multiplierBarSpawnPosition;
+    private Vector3 finishLocation;
     [Space]
     [SerializeField] private Transform mainCamera;
     [SerializeField] private CamFollower camFollower;
@@ -38,6 +36,7 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
 
     void Start()
     {
+        multiplierBarSpawnPosition = null;
         currentHealth = minHealth;
         DOTween.Init();
     }
@@ -95,6 +94,7 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
 
     private void RingWalk()
     {
+        finishLocation = GameObject.FindGameObjectWithTag("FinalTargetLoc").transform.position;
         sequence = DOTween.Sequence();
         sequenceLocalMover = DOTween.Sequence();
         runnerScript.PlayAnimation("StructWalk");
@@ -126,14 +126,8 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
 
     private void SetBarAndCam()
     {
-        //bar
-        multiplierBarSpawnPosition = GameObject.FindGameObjectWithTag("BarSpawnLoc").transform;
         multiplierBar.SetActive(true);
-
-        multiplierBarFinishLocation = new Vector3(multiplierBarSpawnPosition.position.x, 2.5f, multiplierBarSpawnPosition.position.z);
-        multiplierBar.SetActive(true);
-
-        sequenceCamAndBar.Append(multiplierBar.transform.DOMove(multiplierBarFinishLocation, 1.5f));
+        sequenceCamAndBar.Append(multiplierBar.transform.DOMoveY(multiplierBar.transform.position.y - 7.5f , 1.5f));
         sequenceCamAndBar.Join(multiplierBar.transform.DORotate(new Vector3(0, -60, 0), 1.5f, RotateMode.FastBeyond360)
             .SetEase(Ease.Linear).SetLoops(2, LoopType.Restart));
         sequenceCamAndBar.Join(camFollower.transform.DORotate(new Vector3(0, -45, 0), 1.5f)
@@ -148,8 +142,6 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
 
     private void CallTheBoss()
     {
-        bossSpawnPosition = GameObject.FindGameObjectWithTag("BossSpawnLoc").transform;
-        boss.transform.position = bossSpawnPosition.position;
         bossManager.SpawnTheBoss();
     }
 
@@ -167,10 +159,8 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         runnerScript.PlayAnimation("Slap");
         yield return new WaitForSeconds(1.1f); //wait for the exact hit moment
         bossManager.BossTookHit(UIManager.Instance.multiplier * slapPower);
-        yield return new WaitForSeconds(1.01f);
-        bossManager.PlayAnimation("Idle");
 
-        yield return new WaitForSeconds(.573f);
+        yield return new WaitForSeconds(1.574f);
         runnerScript.PlayAnimation("Idle");
     }
 
@@ -222,12 +212,13 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         canRun = true;
         currentHealth = minHealth;
         isItFirstSlap = true;
+
         runnerScript.ResetCharacter();
         camFollower.SwitchTarget(transform);
         boss.transform.position = new Vector3(0, 0, -20);
-        multiplierBar.SetActive(false);
+        multiplierBar.transform.position = new Vector3(0, 0, -20);
+
         UIManager.Instance.SetProgress(0);
         UIManager.Instance.SetActiveProgressBar(true);
-
     }
 }
