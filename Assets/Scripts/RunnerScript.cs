@@ -29,6 +29,7 @@ public class RunnerScript : MonoBehaviour
     private Vector3 oldPosition;
     private bool canRun = false;
     private bool canSwerve = false;
+    private bool canFollow = true;
     private bool moveEnabled = false;
     private string currentAnimName = "Walking";
 
@@ -65,6 +66,7 @@ public class RunnerScript : MonoBehaviour
         {
             canRun = true;
             canSwerve = true;
+            //canFollow = true;
             PlayAnimation("Walking");
             currentAnimName = "Walking";
 
@@ -73,7 +75,7 @@ public class RunnerScript : MonoBehaviour
         else
         {
             canRun = false;
-            //canSwerve = false;
+            canSwerve = false;
             PlayAnimation("Idle");
             currentAnimName = "Idle";
         }
@@ -90,7 +92,7 @@ public class RunnerScript : MonoBehaviour
 
     private void PlayerSwipe_OnSwerve(Vector2 direction)
     {
-        if (canRun && canSwerve)
+        if (canSwerve)
         {
             localMoverTarget.localPosition = localMoverTarget.localPosition + Vector3.right * direction.x * localTargetswipeSpeed * Time.deltaTime;
             ClampLocalPosition();
@@ -107,7 +109,7 @@ public class RunnerScript : MonoBehaviour
 
     void FollowLocalMoverTarget()
     {
-        if (canSwerve)
+        if (canFollow)
         {
             Vector3 direction = localMoverTarget.localPosition - oldPosition;
             animancer.GetAnimatorTransform().forward = Vector3.Lerp(animancer.GetAnimatorTransform().forward, direction, swipeRotateLerpSpeed * Time.deltaTime);

@@ -35,10 +35,10 @@ namespace Ali.Helper
             }
         }
 
-        /*private void Awake()
+        private void Awake()
         {
             GenerateCurrentLevel();
-        }*/
+        }
 
         public void GenerateCurrentLevel()
         {

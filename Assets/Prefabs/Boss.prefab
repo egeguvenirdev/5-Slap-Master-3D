@@ -543,7 +543,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1579219828874748096
 Transform:
   m_ObjectHideFlags: 0
@@ -576,7 +576,9 @@ MonoBehaviour:
   bossMaxHealth: 600
   bossCurrentHealth: 0
   bossSlapPower: 200
+  bossHealthImage: {fileID: 4590822263008251105}
   bossAnimancer: {fileID: 2207138465813199481}
+  bossHealtUI: {fileID: 7828876406361875210}
 --- !u!95 &4830859117577435834
 Animator:
   serializedVersion: 3

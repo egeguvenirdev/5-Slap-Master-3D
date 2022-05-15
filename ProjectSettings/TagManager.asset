@@ -11,6 +11,9 @@ TagManager:
   - BarSpawnLoc
   - BossSpawnLoc
   - FinalTargetLoc
+  - BossParticle
+  - PlayerParticle
+  - Bar
   layers:
   - Default
   - TransparentFX

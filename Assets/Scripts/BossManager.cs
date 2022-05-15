@@ -2,13 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class BossManager : MonoBehaviour
 {
     [SerializeField] private float bossMaxHealth = 600;
     [SerializeField] private float bossCurrentHealth;
     [SerializeField] private float bossSlapPower = 200;
+    [SerializeField] private Image bossHealthImage;
     [SerializeField] private Bermuda.Animation.SimpleAnimancer bossAnimancer;
+    [SerializeField] GameObject bossHealtUI;
 
     Sequence sequence;
 
@@ -37,8 +40,11 @@ public class BossManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.45f);
         bossAnimancer.PlayAnimation("Idle");
-        UIManager.Instance.TurnOnOffUIs(true);
-        UIManager.Instance.SetHealthUIs();
+        OpenUI(true);
+        SetUI(ReturnHealth());
+        PlayerManagement.Instance.OpenUI(true);
+        PlayerManagement.Instance.CanSlap(true);
+        PlayerManagement.Instance.SetUI(PlayerManagement.Instance.ReturnHealth());  
     }
 
     IEnumerator HitRoutine()
@@ -47,7 +53,12 @@ public class BossManager : MonoBehaviour
 
         bossAnimancer.PlayAnimation("Slap");
         yield return new WaitForSeconds(1.1f); //wait for the exact hit moment
-        PlayerManagement.Instance.PlayerTookHit(bossSlapPower);       
+        PlayerManagement.Instance.PlayerTookHit(bossSlapPower);
+        var particle = ObjectPooler.Instance.GetPooledObject("BossParticle");
+        particle.transform.position = transform.position + new Vector3(0, 1.5f, -1f);
+        particle.transform.rotation = Quaternion.identity;
+        particle.SetActive(true);
+        particle.GetComponent<ParticleSystem>().Play();
 
         yield return new WaitForSeconds(1.574f);
         bossAnimancer.PlayAnimation("Idle");
@@ -64,7 +75,7 @@ public class BossManager : MonoBehaviour
         {
             StartCoroutine(TakeSlapRoutine());
             bossCurrentHealth -= damage;
-            UIManager.Instance.SetHealthUIs();
+            SetUI(ReturnHealth());
             bossAnimancer.PlayAnimation("TakeHit");
 
             StartCoroutine(HitRoutine());
@@ -73,7 +84,7 @@ public class BossManager : MonoBehaviour
         {
             sequence = DOTween.Sequence();
             float pathRange = (damage - bossCurrentHealth) / 10;
-            UIManager.Instance.TurnOnOffUIs(false);
+            OpenUI(false);
             PlayerManagement.Instance.SetBossFollowCam();
             bossAnimancer.PlayAnimation("Fly");
             sequence.Append(transform.DOJump(new Vector3(0, 0.125f, (120 + (7.5f * (int)pathRange))), 10, 1, 5).SetSpeedBased()
@@ -102,6 +113,23 @@ public class BossManager : MonoBehaviour
     public void PlayAnimation(string animName)
     {
         bossAnimancer.PlayAnimation(animName);
+    }
+
+    public void OpenUI(bool check)
+    {
+        if (check)
+        {
+            bossHealtUI.SetActive(true);
+        }
+        else
+        {
+            bossHealtUI.SetActive(false);
+        }
+    }
+
+    public void SetUI(float health)
+    {
+        bossHealthImage.fillAmount = health;
     }
 
     public float ReturnHealth()

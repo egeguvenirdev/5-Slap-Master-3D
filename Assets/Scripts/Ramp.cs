@@ -7,7 +7,7 @@ public class Ramp : MonoBehaviour
     [SerializeField] private Material black;
     [SerializeField] private Material green;
     [SerializeField] private GameObject boss;
-    [SerializeField] private float range;
+    [SerializeField] private float blockSize;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -32,10 +32,8 @@ public class Ramp : MonoBehaviour
 
     private void CalculateRange()
     {
-        int range = (int)(transform.position.z / 7.5f);
+        int range = (int)(transform.localPosition.z / blockSize);
         int money = range * ((PlayerPrefs.GetInt("HCLevel") + 1) * 10);
         PlayerPrefs.SetInt("TotalMoney", money);
-        Debug.Log(money);
-        Debug.Log(range);
     }
 }

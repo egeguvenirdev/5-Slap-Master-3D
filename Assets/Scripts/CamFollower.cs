@@ -25,6 +25,7 @@ public class CamFollower : MonoBehaviour
         }
         else
         {
+            boss = GameObject.FindGameObjectWithTag("Boss").transform;
             Vector3 targetPosition = boss.position + offset;
             transform.position = Vector3.Lerp(transform.position, targetPosition, playerFollowSpeed);
         }

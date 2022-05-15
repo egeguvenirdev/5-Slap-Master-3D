@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class PlayerManagement : MonoSingleton<PlayerManagement>
 {
@@ -12,6 +13,7 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     [SerializeField] private float maxHealth = 600;
     [SerializeField] private float slapPower = 75;
     [SerializeField] private GameObject localMover;
+    Vector3 finalPosition;
 
     [Header("Boss Settings")]
     [SerializeField] private GameObject boss;
@@ -19,10 +21,11 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
 
     [Header("Mini Game Uthilities")]
     [SerializeField] private GameObject multiplierBar;
-    private Vector3 finishLocation;
-    [Space]
+    [SerializeField] private GameObject playerHealtUI;
+    [SerializeField] private Image playerHealthImage;
     [SerializeField] private Transform mainCamera;
     [SerializeField] private CamFollower camFollower;
+    private Bar bar;
 
     private bool canRun = true;
     private float currentHealth;
@@ -37,11 +40,14 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     {
         currentHealth = minHealth;
         DOTween.Init();
+        runnerScript.Init();
+        bar = FindObjectOfType<Bar>();
+        boss = GameObject.FindGameObjectWithTag("Boss");
+        bossManager = FindObjectOfType<BossManager>();
     }
 
     void Update()
     {
-
         if (Input.GetMouseButton(0) && canRun)
         {
             runnerScript.StartToRun(true);
@@ -52,7 +58,7 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         }
         if (Input.GetMouseButton(0) && canSlap)
         {
-            UIManager.Instance.SlapButton();
+            bar.SlapButton();
             StartSlapping();
             canSlap = false;
         }
@@ -64,11 +70,10 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
 
         if (currentHealth <= 0)
         {
-            currentHealth = 0;
             canRun = false;
-            runnerScript.StartToRun(false);
-            runnerScript.CanSwerve();
             runnerScript.PlayAnimation("Death");
+            runnerScript.enabled = false;
+            UIManager.Instance.SetActiveProgressBar(false);
             UIManager.Instance.RestartButtonUI();
         }
 
@@ -96,13 +101,13 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
 
     private void RingWalk()
     {
-        finishLocation = GameObject.FindGameObjectWithTag("FinalTargetLoc").transform.position;
         sequence = DOTween.Sequence();
         sequenceLocalMover = DOTween.Sequence();
         runnerScript.PlayAnimation("StructWalk");
 
-        sequenceLocalMover.Append(localMover.transform.DOMove(finishLocation, 8));
-        sequence.Append(transform.DOMove(finishLocation, 8));
+        finalPosition = new Vector3(0, 0, (transform.position.z + 20));
+        sequenceLocalMover.Append(localMover.transform.DOMove(finalPosition, 6));
+        sequence.Append(transform.DOMove(finalPosition, 6));
     }
 
     public void RingJump()
@@ -114,26 +119,22 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         sequence.Insert(1.1f, transform.DOJump(new Vector3(0, .25f, transform.position.z + 3.5f), 3, 1, 1.1f)
             .OnComplete(() => { runnerScript.PlayAnimation("StructWalk"); }));
 
-        sequence.Append(transform.DOMove(finishLocation, 2.5f));
+        sequence.Append(transform.DOMove(finalPosition + new Vector3(0, 0.25f, 0), 2.5f));
     }
 
     public void RingIdle()
     {
         sequence.Kill();
         runnerScript.PlayAnimation("Idle");
-        SetBarAndCam();
+        SetCam();
+        bar.InstantiateTheBar();
         CallTheBoss();
-        canSlap = true;
     }
 
-    private void SetBarAndCam()
-    {
-        multiplierBar.SetActive(true);
-        sequenceCamAndBar.Append(multiplierBar.transform.DOMoveY(multiplierBar.transform.position.y - 7.5f , 1.5f));
-        sequenceCamAndBar.Join(multiplierBar.transform.DORotate(new Vector3(0, -60, 0), 1.5f, RotateMode.FastBeyond360)
-            .SetEase(Ease.Linear).SetLoops(2, LoopType.Restart));
-        sequenceCamAndBar.Join(camFollower.transform.DORotate(new Vector3(0, -45, 0), 1.5f)
-            .OnComplete(() => { UIManager.Instance.MoveMultiplierArrow(); }));
+    private void SetCam()
+    { 
+        camFollower.transform.DORotate(new Vector3(0, -45, 0), 1.5f)
+            .OnComplete(() => { bar.MoveMultiplierArrow(); });
     }
 
     public void SetBossFollowCam()
@@ -160,7 +161,12 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         yield return new WaitForSeconds(1.1f);
         runnerScript.PlayAnimation("Slap");
         yield return new WaitForSeconds(1.1f); //wait for the exact hit moment
-        bossManager.BossTookHit(UIManager.Instance.multiplier * slapPower);
+        bossManager.BossTookHit(bar.multiplier * slapPower);
+        var particle = ObjectPooler.Instance.GetPooledObject("PlayerParticle");
+        particle.transform.position = transform.position + new Vector3(0, 1.5f, 1f);
+        particle.transform.rotation = Quaternion.identity;
+        particle.SetActive(true);
+        particle.GetComponent<ParticleSystem>().Play();
 
         yield return new WaitForSeconds(1.574f);
         runnerScript.PlayAnimation("Idle");
@@ -178,20 +184,19 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         {
             StartCoroutine(TakeSlapRoutine());
             currentHealth -= damage;
-            UIManager.Instance.SetHealthUIs();
+            SetUI(ReturnHealth());
             runnerScript.PlayAnimation("TakeHit");
             canSlap = true;
 
-            UIManager.Instance.MoveMultiplierArrow();
+            bar.MoveMultiplierArrow();
         }
         else
         {
-            UIManager.Instance.TurnOnOffUIs(false);
+            OpenUI(false);
             runnerScript.PlayAnimation("Death");
             UIManager.Instance.RestartButtonUI();
         }
     }
-
     public void WinStuation()
     {
         StopCoroutine(SlapTheBoss());
@@ -204,6 +209,22 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
         runnerScript.PlayAnimation(animName);
     }
 
+    public void OpenUI(bool check)
+    {
+        if (check)
+        {
+            playerHealtUI.SetActive(true);
+        }
+        else
+        {
+            playerHealtUI.SetActive(false);
+        }
+    }
+
+    public void SetUI(float health)
+    {
+        playerHealthImage.fillAmount = health;
+    }
 
     public float ReturnHealth()
     {
@@ -213,6 +234,11 @@ public class PlayerManagement : MonoSingleton<PlayerManagement>
     public float ReturnPower()
     {
         return slapPower;
+    }
+
+    public void CanSlap(bool check)
+    {
+        canSlap = check;
     }
 
     public void ResetCharachter()
