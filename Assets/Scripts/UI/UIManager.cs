@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
@@ -14,7 +15,7 @@ public class UIManager : MonoSingleton<UIManager>
     [Header("Main UI's")]
     [SerializeField] private GameObject tapToPlayUI;
     [SerializeField] private GameObject nextLvMenuUI;
-    [SerializeField] private GameObject restartMenuUI;
+    [SerializeField] private GameObject restartLvUI;
 
     [Header("Sound and Toggle")]
     [SerializeField] private Toggle vibrationToggle;
@@ -61,39 +62,33 @@ public class UIManager : MonoSingleton<UIManager>
         LevelText();
     }
 
-    public void PlayResButton()
+    public void TapToPlayButton()
     {
-        if (tapToPlayUI.activeSelf)
-        {
-            tapToPlayUI.SetActive(false);
-            isPaused = false;
-        }
+        tapToPlayUI.SetActive(false);
+        isPaused = false;
+    }
 
-        if (nextLvMenuUI.activeSelf)
-        {
-            nextLvMenuUI.SetActive(false);
-            isPaused = false;
-            HCLevelManager.Instance.LevelUp();
-            LevelText();
-            HCLevelManager.Instance.GenerateCurrentLevel(); //SAHNEYI YUKLE BASTAN
-        }
+    public void NextLevelButton()
+    {
+        nextLvMenuUI.SetActive(false);
+        isPaused = false;
+        HCLevelManager.Instance.LevelUp();
+        LevelText();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); //SAHNEYI YUKLE BASTAN
+    }
 
-        if (restartMenuUI.activeSelf)
-        {
-            restartMenuUI.SetActive(false);
-            isPaused = false;
-            Debug.Log("YUKLEME");
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            //HCLevelManager.Instance.GenerateCurrentLevel();
-            Debug.Log("YUKLEMEME");
-        }
+    public void RestartLevelButton()
+    {
+        restartLvUI.SetActive(false);
+        isPaused = false;
+        Debug.Log("YUKLEME");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void NextLvUI()
     {
         if (!isPaused) //if the game not stopped
         {
-            tapToPlayUI.SetActive(false);
             nextLvMenuUI.SetActive(true);
             isPaused = true;
             //collectedMoneyText.text = "" + PlayerManagement.Instance.currentLvMoneyAmount + "$";
@@ -104,7 +99,7 @@ public class UIManager : MonoSingleton<UIManager>
     {
         if (!isPaused) //if the game not stopped
         {
-            restartMenuUI.SetActive(true);
+            restartLvUI.SetActive(true);
             isPaused = true;
         }
     }

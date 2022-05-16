@@ -37,6 +37,7 @@ namespace Ali.Helper
 
         private void Awake()
         {
+            Init();
             GenerateCurrentLevel();
         }
 
